@@ -47,6 +47,10 @@ void AMonsterAIController::BeginPlay()
 
 	playerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 	navArea = FNavigationSystem::GetCurrent<UNavigationSystemV1>(this);
+	movementComponent = GetPawn()->FindComponentByClass<UCharacterMovementComponent>();
+
+	// 최대 이동 속력을 저장함
+	maxSpeed = movementComponent->MaxWalkSpeed;
 
 	StartSearchPlayer();
 }
@@ -72,6 +76,7 @@ void AMonsterAIController::Tick(float deltaSeconds)
 	if (!isMoveToPlayer)
 		StartSearchPlayer();
 
+	IncreaseMoveSpeed(deltaSeconds);
 	LookAtLocation(toLocation);
 }
 
@@ -85,6 +90,7 @@ void AMonsterAIController::StartSearchPlayer()
 	isWait = false;
 
 	GenerateRandomSearchLocation();
+	StartMoveSpeed();
 	MoveTo(toLocation);
 }
 
@@ -109,10 +115,48 @@ void AMonsterAIController::MoveToPlayer()
 	if (playerPawn == nullptr)
 		return;
 
+	FVector tempToLocation = toLocation;
+
 	toLocation = playerPawn->GetActorLocation();
-	UE_LOG(LogTemp, Warning, TEXT("Player Location: %s"), *toLocation.ToString());
+	FNavLocation closeMoveablePos;
+
+	if (UNavigationSystemV1* navSystem = UNavigationSystemV1::GetCurrent(GetWorld()))
+	{
+		// 해당 위치로 이동할 수 있는 경우
+		if (navSystem->ProjectPointToNavigation(toLocation, closeMoveablePos))
+			toLocation = closeMoveablePos.Location;
+
+		// 해당 위치로 이동할 수 없는 경우
+		else
+		{
+			// 플레이어 위치에서 NavSystem 상 가장 가까운 영역으로 이동함
+			if (navSystem->GetRandomReachablePointInRadius(toLocation, 500.0f, closeMoveablePos))
+				toLocation = closeMoveablePos.Location;
+
+			// 원래 이동할려던 위치로 이동함
+			else
+				toLocation = tempToLocation;
+		}
+	}
 
 	MoveToLocation(toLocation);
+}
+
+void AMonsterAIController::StartMoveSpeed()
+{
+	movementComponent->MaxWalkSpeed = 0.0f;
+}
+
+void AMonsterAIController::IncreaseMoveSpeed(float deltaSecond)
+{
+	if (movementComponent->MaxWalkSpeed >= maxSpeed)
+		return;
+
+	float accelerationRate = maxSpeed / increaseToMaxSpeedTime; // 초당 증가할 속도
+	float currentSpeed = movementComponent->MaxWalkSpeed;		// 현재 이동 속도
+
+	currentSpeed = FMath::Min(currentSpeed + accelerationRate * deltaSecond, maxSpeed);
+	movementComponent->MaxWalkSpeed = currentSpeed;
 }
 
 void AMonsterAIController::LookAtLocation(FVector targetLocation)

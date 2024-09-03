@@ -59,6 +59,8 @@ private:
 	void GenerateRandomSearchLocation();
 
 	void MoveToPlayer();
+	void StartMoveSpeed();
+	void IncreaseMoveSpeed(float deltaSecond);
 	void LookAtLocation(FVector targetLocation);
 
 	bool IsEnemyClostPlayer();
@@ -72,14 +74,18 @@ private:
 	//							Private Variable
 	// ==============================================================
 
-	APawn* playerPawn;						// 플레이어 Pawn
+	APawn* playerPawn;										// 플레이어 Pawn
 
-	class UNavigationSystemV1* navArea;		// 네비게이션 시스템
+	class UNavigationSystemV1* navArea;						// 네비게이션 시스템
+	class UCharacterMovementComponent* movementComponent;	// 이동 관련 컴포넌트
 		
-	FTimerHandle attackTimerHandle;			// 공격 대기 타임머
-	FTimerHandle waitMoveTimer;				// 다음 이동 타임머
+	FTimerHandle attackTimerHandle;							// 공격 대기 타임머
+	FTimerHandle waitMoveTimer;								// 다음 이동 타임머
 
-	FVector toLocation = FVector();			// 몬스터가 이동할 위치
+	FVector toLocation = FVector();							// 몬스터가 이동할 위치
+
+	float maxSpeed;											// 몬스터의 최대 이동 속도
+	float increaseToMaxSpeedTime = 0.5f;					// 최대 속력까지 증가하는데 걸리는 시간
 	
 	bool isWait;
 	bool isMoveToPlayer;
