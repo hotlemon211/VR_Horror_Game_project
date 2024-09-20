@@ -2,12 +2,15 @@
 
 
 #include "Monster.h"
-
-#include "Components/SphereComponent.h"
-#include "Components/BoxComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "Animation/AnimInstance.h"
 #include "PlayerCharacter.h"
+
+#include "Animation/AnimInstance.h"
+#include "Components/AudioComponent.h"
+#include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Sound/SoundBase.h"
 
 // Sets default values
 AMonster::AMonster()
@@ -17,6 +20,22 @@ AMonster::AMonster()
 
 	detectPlayerCollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Sphere"));
 	detectPlayerCollisionSphere->SetupAttachment(RootComponent);
+
+	isPlayStep1 = false;
+	
+	audioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio Component"));
+	audioComponent->bAutoActivate = false;
+	audioComponent->bOverrideAttenuation = true;
+	
+	soundAttenuation = CreateDefaultSubobject<USoundAttenuation>(TEXT("Sound Attenuation"));
+	
+	FSoundAttenuationSettings attenuationSettings;
+	attenuationSettings.AttenuationShape = EAttenuationShape::Sphere;
+	attenuationSettings.AttenuationShapeExtents = FVector(50.0f);
+	attenuationSettings.FalloffDistance = 1500.0f;
+	
+	soundAttenuation->Attenuation = attenuationSettings;
+	audioComponent->AttenuationSettings = soundAttenuation;
 }
 
 // Called when the game starts or when spawned
@@ -33,7 +52,6 @@ void AMonster::BeginPlay()
 void AMonster::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -47,4 +65,3 @@ USphereComponent* AMonster::GetDetectPlayerCollisionSphere()
 {
 	return detectPlayerCollisionSphere;
 }
-

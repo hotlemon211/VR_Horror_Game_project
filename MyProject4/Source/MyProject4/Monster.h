@@ -21,9 +21,15 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-
 	UPROPERTY(EditAnywhere)
 	class USphereComponent* detectPlayerCollisionSphere;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
+	class UAudioComponent* audioComponent;
+
+	UPROPERTY(visibleAnywhere, BlueprintReadOnly, Category = "Sound")
+	class USoundAttenuation* soundAttenuation;
 
 protected:
 	// Called when the game starts or when spawned
@@ -31,4 +37,9 @@ protected:
 
 public:
 	class USphereComponent* GetDetectPlayerCollisionSphere();
+
+private:
+	
+
+	bool isPlayStep1;
 };
