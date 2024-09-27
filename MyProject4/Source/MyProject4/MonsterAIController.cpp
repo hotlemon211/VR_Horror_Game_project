@@ -50,7 +50,7 @@ void AMonsterAIController::BeginPlay()
 	movementComponent = GetPawn()->FindComponentByClass<UCharacterMovementComponent>();
 
 	// 최대 이동 속력을 저장함
-	maxSpeed = movementComponent->MaxWalkSpeed;
+	maxSpeed = maxWalkSpeed;
 
 	StartSearchPlayer();
 }
@@ -68,6 +68,7 @@ void AMonsterAIController::Tick(float deltaSeconds)
 		isMoveToPlayer = true;
 		isMoveToRandom = false;
 		isWait = false;
+		maxSpeed = maxRunSpeed;
 
 		MoveToPlayer();
 	}
@@ -84,6 +85,8 @@ void AMonsterAIController::StartSearchPlayer()
 {
 	if (isWait || isMoveToRandom)
 		return;
+
+	maxSpeed = maxWalkSpeed;
 
 	isCanAttackPlayer = true;
 	isMoveToRandom = true;

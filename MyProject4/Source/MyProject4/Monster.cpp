@@ -42,10 +42,6 @@ AMonster::AMonster()
 void AMonster::BeginPlay()
 {
 	Super::BeginPlay();
-
-	UCharacterMovementComponent* movementComponent = GetCharacterMovement();
-
-	movementComponent->MaxWalkSpeed = 200.0f;
 }
 
 // Called every frame

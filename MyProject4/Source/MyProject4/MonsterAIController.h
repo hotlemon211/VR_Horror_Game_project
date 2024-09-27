@@ -34,6 +34,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float playerAttackDistance = 200.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	float maxWalkSpeed = 200.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	float maxRunSpeed = 400.0f;
+
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float viewAngle = 120.0f;					// 몬스터 시야 각도
 
