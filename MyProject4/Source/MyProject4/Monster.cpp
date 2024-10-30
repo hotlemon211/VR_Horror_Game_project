@@ -8,8 +8,11 @@
 #include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Math/UnrealMathUtility.h"
+#include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
 
 // Sets default values
@@ -18,8 +21,8 @@ AMonster::AMonster()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	detectPlayerCollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Sphere"));
-	detectPlayerCollisionSphere->SetupAttachment(RootComponent);
+	//detectPlayerCollisionSphere = CreateDefaultSubobject<USphereComponent>(TEXT("Collision Sphere"));
+	//detectPlayerCollisionSphere->SetupAttachment(RootComponent);
 
 	isPlayStep1 = false;
 	
@@ -36,6 +39,8 @@ AMonster::AMonster()
 	
 	soundAttenuation->Attenuation = attenuationSettings;
 	audioComponent->AttenuationSettings = soundAttenuation;
+
+	playerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 }
 
 // Called when the game starts or when spawned
@@ -57,7 +62,16 @@ void AMonster::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-USphereComponent* AMonster::GetDetectPlayerCollisionSphere()
+void AMonster::LootAtTarget(AActor* player)
 {
-	return detectPlayerCollisionSphere;
+	if (player == nullptr)
+		return;
+
+	FVector monsterLocation = GetActorLocation();
+	FVector playerLocation = player->GetActorLocation();
+
+	FVector direction = (playerLocation - monsterLocation).GetSafeNormal();
+	FRotator newRotation = FRotationMatrix::MakeFromX(direction).Rotator();
+
+	player->SetActorRotation(newRotation);
 }

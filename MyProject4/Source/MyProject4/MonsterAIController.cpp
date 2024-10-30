@@ -12,35 +12,6 @@
 #include "PlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
-void AMonsterAIController::OnMoveCompleted(FAIRequestID requestID, const FPathFollowingResult& result)
-{
-	Super::OnMoveCompleted(requestID, result);
-
-	// 플레이어를 찾는 경우
-	if (!isMoveToPlayer && isMoveToRandom && !isWait)
-	{
-		UE_LOG(LogTemp, Log, TEXT("Random"));
-
-		// 최소 대기 시간과 최대 대기 시간 사이에서 랜덤 대기 시간 선택
-		float waitTime = FMath::RandRange(minWaitTime, maxWaitTime);
-		isWait = true;
-		isMoveToPlayer = false;
-		isMoveToRandom = false;
-
-		// 타이머 설정 로그 추가
-		UE_LOG(LogTemp, Warning, TEXT("Setting Timer for %f seconds"), waitTime);
-
-		// 대기 시간 후에 StartSearchPlayer 호출
-		GetWorld()->GetTimerManager().SetTimer(waitMoveTimer, this, &AMonsterAIController::ChangeWait, waitTime, false);
-	}
-}
-
-void AMonsterAIController::ChangeWait()
-{
-	isWait = false;
-	MoveTo(GetPawn()->GetTargetLocation());
-}
-
 void AMonsterAIController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -79,6 +50,35 @@ void AMonsterAIController::Tick(float deltaSeconds)
 
 	IncreaseMoveSpeed(deltaSeconds);
 	LookAtLocation(toLocation);
+}
+
+void AMonsterAIController::OnMoveCompleted(FAIRequestID requestID, const FPathFollowingResult& result)
+{
+	Super::OnMoveCompleted(requestID, result);
+
+	// 플레이어를 찾는 경우
+	if (!isMoveToPlayer && isMoveToRandom && !isWait)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Random"));
+
+		// 최소 대기 시간과 최대 대기 시간 사이에서 랜덤 대기 시간 선택
+		float waitTime = FMath::RandRange(minWaitTime, maxWaitTime);
+		isWait = true;
+		isMoveToPlayer = false;
+		isMoveToRandom = false;
+
+		// 타이머 설정 로그 추가
+		UE_LOG(LogTemp, Warning, TEXT("Setting Timer for %f seconds"), waitTime);
+
+		// 대기 시간 후에 StartSearchPlayer 호출
+		GetWorld()->GetTimerManager().SetTimer(waitMoveTimer, this, &AMonsterAIController::ChangeWait, waitTime, false);
+	}
+}
+
+void AMonsterAIController::ChangeWait()
+{
+	isWait = false;
+	MoveTo(GetPawn()->GetTargetLocation());
 }
 
 void AMonsterAIController::StartSearchPlayer()

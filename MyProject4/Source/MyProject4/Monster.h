@@ -21,10 +21,6 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(EditAnywhere)
-	class USphereComponent* detectPlayerCollisionSphere;
-
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Sound")
 	class UAudioComponent* audioComponent;
 
@@ -35,11 +31,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:
-	class USphereComponent* GetDetectPlayerCollisionSphere();
-
 private:
-	
+	void LootAtTarget(AActor* target);
+
+	APawn* playerPawn;										// 플레이어 Pawn
 
 	bool isPlayStep1;
 };
