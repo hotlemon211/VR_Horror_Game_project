@@ -26,7 +26,7 @@ public:
 	// ==============================================================
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	float searchRadius = 2500.0f;				// 플레이어 인식 가능한 거리
+	float searchRadius = 2000.0f;				// 플레이어 인식 가능한 거리
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float playerStoppingDistance = 60.0f;
@@ -35,10 +35,10 @@ public:
 	float playerAttackDistance = 200.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	float maxWalkSpeed = 200.0f;
+	float maxWalkSpeed = 150.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	float maxRunSpeed = 375.0f;
+	float maxRunSpeed = 300.0f;
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float viewAngle = 120.0f;					// 몬스터 시야 각도
